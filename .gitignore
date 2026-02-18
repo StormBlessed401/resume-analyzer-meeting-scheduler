@@ -1,0 +1,25 @@
+# =========================
+# GLOBAL
+# =========================
+.env
+.env.local
+.DS_Store
+
+# =========================
+# PYTHON / FASTAPI
+# =========================
+resume-backendd/venv/
+resume-backendd/__pycache__/
+resume-backendd/*.pyc
+
+# =========================
+# NODE / NEXTJS
+# =========================
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# =========================
+# CACHE
+# =========================
+*.log
