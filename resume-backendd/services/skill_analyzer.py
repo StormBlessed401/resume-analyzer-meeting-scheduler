@@ -1,15 +1,13 @@
 import os
 import json
 import re
-from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # ==============================
-# LOAD MODEL (only once)
+# CONFIG
 # ==============================
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
-SIMILARITY_THRESHOLD = 0.4
+SIMILARITY_THRESHOLD = 0.3
 
 # ==============================
 # SKILL ALIASES
@@ -18,7 +16,7 @@ SKILL_ALIASES = {
     "machine learning": ["ml"],
     "artificial intelligence": ["ai"],
     "natural language processing": ["nlp"],
-    "deep learning": ["dl"]
+    "deep learning": ["dl"],
 }
 
 # ==============================
@@ -30,17 +28,27 @@ SKILLS_PATH = os.path.join(BASE_DIR, "skills.json")
 with open(SKILLS_PATH, "r", encoding="utf-8") as f:
     SKILL_DB = json.load(f)
 
+# ==============================
+# HELPERS
+# ==============================
+def normalize(text: str) -> str:
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9+.# ]", " ", text)
+    return text
 
-# ==============================
-# EXTRACT REQUIRED SKILLS FROM JD
-# ==============================
+
+def extract_email(text: str):
+    pattern = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"
+    match = re.search(pattern, text)
+    return match.group(0) if match else None
+
+
 def extract_required_skills(jd_text: str):
-    jd_text = jd_text.lower()
+    jd_text = normalize(jd_text)
     required = []
 
     for skill in SKILL_DB:
-        skill_lower = skill.lower()
-        pattern = r"\b" + re.escape(skill_lower) + r"\b"
+        pattern = r"\b" + re.escape(skill.lower()) + r"\b"
         if re.search(pattern, jd_text):
             required.append(skill)
 
@@ -48,20 +56,13 @@ def extract_required_skills(jd_text: str):
 
 
 # ==============================
-# EXTRACT EMAIL FROM RESUME
-# ==============================
-def extract_email(text: str):
-    pattern = r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+"
-    match = re.search(pattern, text)
-    return match.group(0) if match else None
-
-
-# ==============================
 # MAIN ANALYSIS FUNCTION
 # ==============================
 def analyze_skills(resume_text: str, jd_text: str):
 
-    resume_lower = resume_text.lower()
+    resume_text_norm = normalize(resume_text)
+    jd_text_norm = normalize(jd_text)
+
     required_skills = extract_required_skills(jd_text)
 
     if not required_skills:
@@ -69,22 +70,31 @@ def analyze_skills(resume_text: str, jd_text: str):
             "matched_skills": [],
             "missing_skills": [],
             "match_percentage": 0,
-            "candidate_email": extract_email(resume_text),  # still extract email even if no skills
+            "candidate_email": extract_email(resume_text),
         }
-
-    resume_embedding = model.encode([resume_text])
 
     matched = []
     missing = []
 
-    for skill in required_skills:
+    # ==============================
+    # TF-IDF SETUP (LIGHTWEIGHT)
+    # ==============================
+    vectorizer = TfidfVectorizer(ngram_range=(1, 2))
+    corpus = [resume_text_norm] + [skill.lower() for skill in required_skills]
+    vectors = vectorizer.fit_transform(corpus)
+
+    resume_vector = vectors[0]
+    skill_vectors = vectors[1:]
+
+    similarities = cosine_similarity(skill_vectors, resume_vector)
+
+    for idx, skill in enumerate(required_skills):
         skill_lower = skill.lower()
 
         # ==========================
         # 1️⃣ DIRECT EXACT MATCH
         # ==========================
-        pattern = r"\b" + re.escape(skill_lower) + r"\b"
-        if re.search(pattern, resume_lower):
+        if re.search(r"\b" + re.escape(skill_lower) + r"\b", resume_text_norm):
             matched.append(skill)
             continue
 
@@ -92,37 +102,28 @@ def analyze_skills(resume_text: str, jd_text: str):
         # 2️⃣ ALIAS MATCH
         # ==========================
         if skill_lower in SKILL_ALIASES:
-            alias_found = False
-            for alias in SKILL_ALIASES[skill_lower]:
-                alias_pattern = r"\b" + re.escape(alias) + r"\b"
-                if re.search(alias_pattern, resume_lower):
-                    matched.append(skill)
-                    alias_found = True
-                    break
-            if alias_found:
+            if any(
+                re.search(r"\b" + re.escape(alias) + r"\b", resume_text_norm)
+                for alias in SKILL_ALIASES[skill_lower]
+            ):
+                matched.append(skill)
                 continue
 
         # ==========================
-        # 3️⃣ SEMANTIC SIMILARITY FALLBACK
+        # 3️⃣ SEMANTIC FALLBACK (TF-IDF)
         # ==========================
-        skill_embedding = model.encode([skill])
-        similarity = cosine_similarity(skill_embedding, resume_embedding)[0][0]
-
-        if similarity >= SIMILARITY_THRESHOLD:
+        if similarities[idx][0] >= SIMILARITY_THRESHOLD:
             matched.append(skill)
         else:
             missing.append(skill)
 
     match_percentage = round(
-        (len(matched) / len(required_skills)) * 100,
-        2
+        (len(matched) / len(required_skills)) * 100, 2
     )
-
-    email = extract_email(resume_text)
 
     return {
         "matched_skills": matched,
         "missing_skills": missing,
-        "match_percentage": match_percentage,  # ← missing comma was here
-        "candidate_email": email,
+        "match_percentage": match_percentage,
+        "candidate_email": extract_email(resume_text),
     }
