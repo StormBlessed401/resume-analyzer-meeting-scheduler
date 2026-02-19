@@ -101,6 +101,10 @@ export default function Home() {
   const circumference = 2 * Math.PI * 54;
   const strokeDashoffset = circumference - (matchPercentage / 100) * circumference;
 
+  // ATS ring — amber/gold, out of 100
+  const atsCircumference = 2 * Math.PI * 54;
+  const atsStrokeDashoffset = atsCircumference - (atsScore / 100) * atsCircumference;
+
   return (
     <>
       <style>{`
@@ -517,6 +521,132 @@ export default function Home() {
         .skill-dot.matched { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.5); }
         .skill-dot.missing { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.5); }
 
+        /* ── ATS CARD — amber/gold theme ── */
+        .ats-card {
+          background: rgba(251, 191, 36, 0.03);
+          border: 1px solid rgba(251, 191, 36, 0.15);
+          border-radius: 16px;
+          padding: 24px;
+          margin-top: 20px;
+        }
+        .ats-card-header {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+          margin-bottom: 20px;
+        }
+        .ats-ring {
+          flex-shrink: 0;
+          position: relative;
+          width: 88px;
+          height: 88px;
+        }
+        .ats-ring svg {
+          transform: rotate(-90deg);
+          width: 88px;
+          height: 88px;
+        }
+        .ats-ring-track {
+          fill: none;
+          stroke: rgba(251, 191, 36, 0.1);
+          stroke-width: 7;
+        }
+        .ats-ring-fill {
+          fill: none;
+          stroke: #f59e0b;
+          stroke-width: 7;
+          stroke-linecap: round;
+          transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+          filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5));
+        }
+        .ats-ring-label {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1px;
+        }
+        .ats-ring-number {
+          font-family: 'DM Serif Display', serif;
+          font-size: 22px;
+          line-height: 1;
+          color: #fcd34d;
+        }
+        .ats-ring-label-text {
+          font-size: 9px;
+          color: #92692a;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+        }
+        .ats-meta {
+          flex: 1;
+        }
+        .ats-card-title {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: #d97706;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 6px;
+        }
+        .ats-card-title-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #f59e0b;
+          box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+        }
+        .ats-card-desc {
+          font-size: 12px;
+          color: #78643a;
+          font-weight: 300;
+          line-height: 1.5;
+        }
+        .ats-breakdown-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        @media (max-width: 640px) {
+          .ats-breakdown-grid { grid-template-columns: 1fr; }
+        }
+        .ats-breakdown-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 14px;
+          border-radius: 10px;
+          background: rgba(251, 191, 36, 0.04);
+          border: 1px solid rgba(251, 191, 36, 0.1);
+          transition: all 0.15s;
+        }
+        .ats-breakdown-item:hover {
+          background: rgba(251, 191, 36, 0.07);
+          border-color: rgba(251, 191, 36, 0.2);
+        }
+        .ats-breakdown-label {
+          font-size: 12.5px;
+          color: #a07c3a;
+          font-weight: 400;
+        }
+        .ats-breakdown-value {
+          font-family: 'DM Serif Display', serif;
+          font-size: 15px;
+          color: #fcd34d;
+        }
+        .ats-breakdown-max {
+          font-family: 'DM Sans', sans-serif;
+          font-size: 11px;
+          color: #6b5020;
+          font-weight: 400;
+        }
+
         /* SCHEDULE INTERVIEW BUTTON */
         .interview-section {
           margin-top: 24px;
@@ -830,23 +960,71 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* ATS Score Section */}
-              <div className="skills-card" style={{ marginTop: "20px" }}>
-                <div className="skills-card-header">
-                  <div className="skills-card-title">
-                    ATS Compatibility Score
+              {/* ATS Score Section — amber/gold theme */}
+              <div className="ats-card">
+                <div className="ats-card-header">
+                  {/* Mini ring for ATS */}
+                  <div className="ats-ring">
+                    <svg viewBox="0 0 88 88">
+                      <circle className="ats-ring-track" cx="44" cy="44" r="37" />
+                      <circle
+                        className="ats-ring-fill"
+                        cx="44"
+                        cy="44"
+                        r="37"
+                        strokeDasharray={2 * Math.PI * 37}
+                        strokeDashoffset={2 * Math.PI * 37 - (atsScore / 100) * 2 * Math.PI * 37}
+                      />
+                    </svg>
+                    <div className="ats-ring-label">
+                      <span className="ats-ring-number">{atsScore}</span>
+                      <span className="ats-ring-label-text">/ 100</span>
+                    </div>
                   </div>
-                  <span className="skills-count">{atsScore}</span>
+                  <div className="ats-meta">
+                    <div className="ats-card-title">
+                      <div className="ats-card-title-dot" />
+                      ATS Compatibility Score
+                    </div>
+                    <p className="ats-card-desc">
+                      How well your resume is optimized for applicant tracking systems — based on keywords, structure, formatting, and readability.
+                    </p>
+                  </div>
                 </div>
 
                 {atsBreakdown && (
-                  <ul className="skill-list">
-                    <li className="skill-item">Keywords: {atsBreakdown.keywords} / 30</li>
-                    <li className="skill-item">Structure: {atsBreakdown.structure} / 20</li>
-                    <li className="skill-item">Measurable Achievements: {atsBreakdown.measurable} / 20</li>
-                    <li className="skill-item">Formatting: {atsBreakdown.formatting} / 15</li>
-                    <li className="skill-item">Readability: {atsBreakdown.readability} / 15</li>
-                  </ul>
+                  <div className="ats-breakdown-grid">
+                    <div className="ats-breakdown-item">
+                      <span className="ats-breakdown-label">Keywords</span>
+                      <span className="ats-breakdown-value">
+                        {atsBreakdown.keywords} <span className="ats-breakdown-max">/ 30</span>
+                      </span>
+                    </div>
+                    <div className="ats-breakdown-item">
+                      <span className="ats-breakdown-label">Structure</span>
+                      <span className="ats-breakdown-value">
+                        {atsBreakdown.structure} <span className="ats-breakdown-max">/ 20</span>
+                      </span>
+                    </div>
+                    <div className="ats-breakdown-item">
+                      <span className="ats-breakdown-label">Achievements</span>
+                      <span className="ats-breakdown-value">
+                        {atsBreakdown.measurable} <span className="ats-breakdown-max">/ 20</span>
+                      </span>
+                    </div>
+                    <div className="ats-breakdown-item">
+                      <span className="ats-breakdown-label">Formatting</span>
+                      <span className="ats-breakdown-value">
+                        {atsBreakdown.formatting} <span className="ats-breakdown-max">/ 15</span>
+                      </span>
+                    </div>
+                    <div className="ats-breakdown-item">
+                      <span className="ats-breakdown-label">Readability</span>
+                      <span className="ats-breakdown-value">
+                        {atsBreakdown.readability} <span className="ats-breakdown-max">/ 15</span>
+                      </span>
+                    </div>
+                  </div>
                 )}
               </div>
 
