@@ -66,7 +66,9 @@ def analyze(request: AnalyzeRequest):
         "matched_skills": result["matched_skills"],
         "missing_skills": result["missing_skills"],
         "match_percentage": result["match_percentage"],
-        "candidate_email": email
+        "candidate_email": email,
+        "ats_score": result["ats_score"],
+        "ats_breakdown": result["ats_breakdown"],
     }
 
 
@@ -88,5 +90,7 @@ async def analyze_pdf(
         "matched_skills": result["matched_skills"],
         "missing_skills": result["missing_skills"],
         "match_percentage": result["match_percentage"],
-        "candidate_email": email
+        "candidate_email": email,
+        "ats_score": result["ats_score"],
+        "ats_breakdown": result["ats_breakdown"],
     }
