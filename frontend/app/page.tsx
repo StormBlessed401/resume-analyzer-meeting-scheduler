@@ -72,16 +72,47 @@ export default function Home() {
   // };
 
   // ✅ Step 3 — Outlook Email handler
+// const handleScheduleInterview = () => {
+//   if (!candidateEmail) return;
+
+//   const subject = encodeURIComponent("Interview Invitation");
+//   const body = encodeURIComponent(
+//     "Hi,\n\nWe would like to invite you for an interview.\n\nPlease let us know your availability.\n\nBest Regards"
+//   );
+
+//   window.open(
+//     `https://outlook.office.com/mail/deeplink/compose?to=${candidateEmail}&subject=${subject}&body=${body}`,
+//     "_blank"
+//   );
+// };
+
+  // ✅ Step 3 — Outlook Calendar Event handler
 const handleScheduleInterview = () => {
   if (!candidateEmail) return;
 
   const subject = encodeURIComponent("Interview Invitation");
+
   const body = encodeURIComponent(
-    "Hi,\n\nWe would like to invite you for an interview.\n\nPlease let us know your availability.\n\nBest Regards"
-  );
+  "Hi,\n\n" +
+  "Thank you for your interest in the position and for taking the time to share your profile with us. " +
+  "We were impressed by your background and would like to move forward by scheduling an interview to discuss your experience in more detail.\n\n" +
+  "During this conversation, we’ll talk about your skills, previous projects, and how your expertise aligns with the role and our team’s goals.\n\n" +
+  "Please confirm your availability for the proposed time, or feel free to suggest an alternative slot that works better for you.\n\n" +
+  "We look forward to speaking with you.\n\n" +
+  "Best regards,\n" +
+  "Hiring Team"
+);
+  // Example: 1-hour event starting now
+  const start = new Date();
+  const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+  const formatDate = (date: Date) =>
+    date.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 
   window.open(
-    `https://outlook.office.com/mail/deeplink/compose?to=${candidateEmail}&subject=${subject}&body=${body}`,
+    `https://outlook.office.com/calendar/0/deeplink/compose?subject=${subject}&body=${body}&to=${candidateEmail}&startdt=${formatDate(
+      start
+    )}&enddt=${formatDate(end)}&online=1`,
     "_blank"
   );
 };
@@ -849,7 +880,8 @@ const handleScheduleInterview = () => {
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
                     <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                   </svg>
-                  <span>Send Email / Invite on Outlook</span>
+                 <span>Create Interview Event on Outlook</span>
+
 
                   <svg
                     width="16"
@@ -868,7 +900,8 @@ const handleScheduleInterview = () => {
                 </button>
                 <p className="interview-email-hint">
                   {candidateEmail
-                    ? <>Opens Outlook email draft for <strong>{candidateEmail}</strong></>
+                    ? <>Creates Outlook calendar invite for <strong>{candidateEmail}</strong></>
+
 
                     : "No email found in resume"}
                 </p>
