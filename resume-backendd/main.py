@@ -80,10 +80,17 @@ async def analyze_pdf(
     file: UploadFile = File(...),
     jd: str = Form(...)
 ):
-
     resume_text = extract_text_from_pdf(file)
 
+    # DEBUG — check these in your terminal
+    print("=== RESUME TEXT LENGTH ===", len(resume_text))
+    print("=== RESUME TEXT SAMPLE ===", resume_text[:300])
+
     result = analyze_skills(resume_text, jd)
+
+    print("=== ATS RESULT ===", result["ats_score"])
+    print("=== ATS BREAKDOWN ===", result["ats_breakdown"])
+
     email = extract_email(resume_text)
 
     return {
