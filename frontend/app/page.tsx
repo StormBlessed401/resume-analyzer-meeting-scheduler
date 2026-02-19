@@ -3,6 +3,9 @@
 import { useState } from "react";
 
 export default function Home() {
+
+  const [atsScore, setAtsScore] = useState<number>(0);
+  const [atsBreakdown, setAtsBreakdown] = useState<any>(null);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jd, setJd] = useState("");
   const [matchedSkills, setMatchedSkills] = useState<string[]>([]);
@@ -15,6 +18,10 @@ export default function Home() {
   const [candidateEmail, setCandidateEmail] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
+
+    setAtsScore(data.ats_score || 0);
+   setAtsBreakdown(data.ats_breakdown || null);
+
     if (!resumeFile || !jd.trim()) return;
 
     setLoading(true);
@@ -378,6 +385,27 @@ const handleScheduleInterview = () => {
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* RESULTS */
+
+        {/* ATS Score Section */}
+<div className="skills-card" style={{ marginTop: "20px" }}>
+  <div className="skills-card-header">
+    <div className="skills-card-title">
+      ATS Compatibility Score
+    </div>
+    <span className="skills-count">{atsScore}</span>
+  </div>
+
+  {atsBreakdown && (
+    <ul className="skill-list">
+      <li className="skill-item">Keywords: {atsBreakdown.keywords} / 30</li>
+      <li className="skill-item">Structure: {atsBreakdown.structure} / 20</li>
+      <li className="skill-item">Measurable Achievements: {atsBreakdown.measurable} / 20</li>
+      <li className="skill-item">Formatting: {atsBreakdown.formatting} / 15</li>
+      <li className="skill-item">Readability: {atsBreakdown.readability} / 15</li>
+    </ul>
+  )}
+</div>
+
         .results {
           margin-top: 40px;
           animation: fadeUp 0.5s ease both;
