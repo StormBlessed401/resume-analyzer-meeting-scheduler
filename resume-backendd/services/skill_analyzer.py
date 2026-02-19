@@ -43,6 +43,16 @@ def extract_required_skills(jd_text: str):
         pattern = r"\b" + re.escape(skill.lower()) + r"\b"
         if re.search(pattern, jd_text):
             required.append(skill)
+            continue
+
+        # Check aliases
+        skill_lower = skill.lower()
+        if skill_lower in SKILL_ALIASES:
+            if any(
+                re.search(r"\b" + re.escape(alias) + r"\b", jd_text)
+                for alias in SKILL_ALIASES[skill_lower]
+            ):
+                required.append(skill)
 
     return list(set(required))
 
@@ -50,7 +60,7 @@ def extract_required_skills(jd_text: str):
 # ==============================
 # ATS SCORING SYSTEM
 # ==============================
-def ats_score(resume_text, jd_skills):
+def compute_ats_score(resume_text, jd_skills):
     resume_text_norm = normalize(resume_text)
 
     # 1️⃣ Keyword Score (30)
@@ -67,14 +77,7 @@ def ats_score(resume_text, jd_skills):
 
     # 3️⃣ Measurable Achievements (20)
     numbers = len(re.findall(r"\d+%|\d+", resume_text_norm))
-    if numbers > 10:
-        measurable_score = 20
-    elif numbers > 5:
-        measurable_score = 15
-    elif numbers > 2:
-        measurable_score = 10
-    else:
-        measurable_score = 5
+    measurable_score = min(round((numbers / 10) * 20), 20)
 
     # 4️⃣ Formatting Simplicity (15)
     symbols = len(re.findall(r"[^\w\s.,%-]", resume_text))
@@ -125,14 +128,17 @@ def analyze_skills(resume_text: str, jd_text: str):
     resume_text_norm = normalize(resume_text)
     required_skills = extract_required_skills(jd_text)
 
+    # ✅ Always compute ATS score, regardless of skill match result
+    ats_results = compute_ats_score(resume_text, required_skills)
+
     if not required_skills:
         return {
             "matched_skills": [],
             "missing_skills": [],
             "match_percentage": 0,
             "candidate_email": extract_email(resume_text),
-            "ats_score": 0,
-            "ats_breakdown": {},
+            "ats_score": ats_results["ats_score"],
+            "ats_breakdown": ats_results["ats_breakdown"],
         }
 
     matched = []
@@ -169,9 +175,6 @@ def analyze_skills(resume_text: str, jd_text: str):
     match_percentage = round(
         (len(matched) / len(required_skills)) * 100, 2
     )
-
-    # 🔥 ATS CALCULATION
-    ats_results = ats_score(resume_text, required_skills)
 
     return {
         "matched_skills": matched,
