@@ -59,17 +59,33 @@ export default function Home() {
   };
 
   // ✅ Step 3 — Teams handler
-  const handleScheduleInterview = () => {
-    if (!candidateEmail) return;
-    const subject = encodeURIComponent("Interview Invitation");
-    const body = encodeURIComponent(
-      "Hi,\n\nWe would like to invite you for an interview.\n\nBest Regards"
-    );
-    window.open(
-      `https://teams.microsoft.com/l/chat/0/0?users=${candidateEmail}&topicName=${subject}&message=${body}`,
-      "_blank"
-    );
-  };
+  // const handleScheduleInterview = () => {
+  //   if (!candidateEmail) return;
+  //   const subject = encodeURIComponent("Interview Invitation");
+  //   const body = encodeURIComponent(
+  //     "Hi,\n\nWe would like to invite you for an interview.\n\nBest Regards"
+  //   );
+  //   window.open(
+  //     `https://teams.microsoft.com/l/chat/0/0?users=${candidateEmail}&topicName=${subject}&message=${body}`,
+  //     "_blank"
+  //   );
+  // };
+
+  // ✅ Step 3 — Outlook Email handler
+const handleScheduleInterview = () => {
+  if (!candidateEmail) return;
+
+  const subject = encodeURIComponent("Interview Invitation");
+  const body = encodeURIComponent(
+    "Hi,\n\nWe would like to invite you for an interview.\n\nPlease let us know your availability.\n\nBest Regards"
+  );
+
+  window.open(
+    `https://outlook.office.com/mail/deeplink/compose?to=${candidateEmail}&subject=${subject}&body=${body}`,
+    "_blank"
+  );
+};
+
 
   const scoreColor =
     matchPercentage >= 70
