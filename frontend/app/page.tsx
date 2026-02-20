@@ -514,7 +514,7 @@ export default function Home() {
                   </div>
                   <div>
                     <div style={{ fontSize: '11px', fontWeight: '700', color: 'var(--brand)', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '3px' }}>For Applicants</div>
-                    <div style={{ fontSize: '12.5px', color: 'var(--text-secondary)', fontWeight: '300', lineHeight: '1.6' }}>Upload your resume and a job description to evaluate your match score, identify missing skills, and assess your ATS compatibility.</div>
+                    <div style={{ fontSize: '12.5px', color: 'var(--text-secondary)', fontWeight: '300', lineHeight: '1.6' }}>Upload your resume and a job description and/or the Key Skills to evaluate your match score, identify missing skills, and assess your ATS compatibility.</div>
                   </div>
                 </div>
                 <div style={{
