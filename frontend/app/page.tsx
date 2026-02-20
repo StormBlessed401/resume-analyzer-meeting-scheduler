@@ -715,10 +715,10 @@ export default function Home() {
            <h1>
                 Resume <em>Gap</em> Analyzer, <em>ATS</em> Checker & Interview Scheduler
            </h1>
-            <p className="header-sub">
-              Upload your resume and paste a job description and/or key skills to discover how
-              well you matchand and what skills you're missing.
-            </p>
+           <p className="header-sub">
+         For applicants: Upload your resume and a job description to evaluate your match score, identify missing skills, and assess your ATS compatibility.  
+         For HR teams: Analyze candidate resumes against role requirements, review ATS readiness, and seamlessly schedule interviews.
+          </p>  
           </header>
 
           {/* INPUTS */}
