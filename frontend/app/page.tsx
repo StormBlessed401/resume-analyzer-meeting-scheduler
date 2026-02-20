@@ -710,14 +710,14 @@ export default function Home() {
           {/* HEADER */}
           <header className="header">
             <div className="header-eyebrow">
-              <span /> AI-Powered Analysis
+              <span /> NLP Powered Analysis
             </div>
             <h1>
               Resume <em>Gap</em> Analyzer
             </h1>
             <p className="header-sub">
-              Upload your resume and paste a job description to discover how
-              well you match — and exactly what to work on.
+              Upload your resume and paste a job description and/or key skills to discover how
+              well you matchand and what skills you're missing.
             </p>
           </header>
 
@@ -790,7 +790,7 @@ export default function Home() {
             <div className="input-card">
               <div className="input-label">
                 <div className="input-label-dot" />
-                Job Description
+                Job Description/Key Skills
               </div>
               <textarea
                 className="jd-textarea"
