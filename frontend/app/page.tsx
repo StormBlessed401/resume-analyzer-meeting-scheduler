@@ -542,7 +542,7 @@ export default function Home() {
           </div>
 
           <div className="step-row">
-            <div className="step-label"><div className="step-num">1</div>Upload your resume in PDF (True PDF)</div>
+            <div className="step-label"><div className="step-num">1</div>Upload your resume in True PDF Format</div>
             <div className="step-label"><div className="step-num">2</div>Paste the job description</div>
           </div>
 
