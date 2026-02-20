@@ -712,9 +712,9 @@ export default function Home() {
             <div className="header-eyebrow">
               <span /> NLP Powered Analysis
             </div>
-            <h1>
-              Resume <em>Gap</em> Analyzer/</em>ATS</em> Score</em> Checker
-            </h1>
+           <h1>
+                Resume <em>Gap</em> Analyzer, <em>ATS</em> Checker & Interview Scheduler
+           </h1>
             <p className="header-sub">
               Upload your resume and paste a job description and/or key skills to discover how
               well you matchand and what skills you're missing.
