@@ -713,7 +713,7 @@ export default function Home() {
               <span /> NLP Powered Analysis
             </div>
             <h1>
-              Resume <em>Gap</em> Analyzer
+              Resume <em>Gap</em> Analyzer/</em>ATS</em> Score</em> Checker
             </h1>
             <p className="header-sub">
               Upload your resume and paste a job description and/or key skills to discover how
